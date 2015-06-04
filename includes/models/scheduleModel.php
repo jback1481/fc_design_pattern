@@ -9,6 +9,19 @@ namespace tpt;
  * The schedule model
  */
 class scheduleModel {
+  /**
+   * __construct method
+   */
+  public function __construct() {
+
+  }
+
+  /**
+   * __destruct method
+   */
+  public function __destruct() {
+
+  }
 
   /**
    * update method
