@@ -1,5 +1,7 @@
 <?php
 
+namespace tpt\helpers;
+
 /*
  * CSVImporter class
  *
@@ -11,7 +13,6 @@
  */
 class CSVHelper {
   private $delimiter;
-
   private $header;
   private $handle;
   private $data;
@@ -57,7 +58,7 @@ class CSVHelper {
     $this->data = array();
     // Parse the CSV
     if ($this->handle !== FALSE) {
-      while (($row = fgetcsv($this->handle, 1000, $this->delimiter)) !== FALSE) {
+      while (($row = fgetcsv($this->handle, 0, $this->delimiter)) !== FALSE) {
         if(!$this->header) {
           $this->header = $row;
         } else {

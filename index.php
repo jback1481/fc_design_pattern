@@ -39,7 +39,7 @@
   // Require the class file
   require_once (BASE_PATH.'/includes/controllers/'.strtolower(substr($requestController, 0, 1)).substr($requestController, 1).'Controller.php');
   // Instance the class using the tpt namespace (change this to your base namespace
-  $class = '\\' . 'tpt'  .'\\' . $requestController.'Controller';
+  $class = '\\' . 'tpt'  .'\\' . 'controllers'  .'\\' . $requestController.'Controller';
   // Init the contoller class, and call the requestAction (method) on the class
   $controller = new $class();
   call_user_func_array(array($controller, $requestAction), array($requestQuery));

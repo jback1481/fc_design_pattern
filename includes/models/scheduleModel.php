@@ -1,6 +1,6 @@
 <?php
 
-namespace tpt;
+namespace tpt\models;
 
 /**
  * Class scheduleModel
@@ -9,6 +9,13 @@ namespace tpt;
  * The schedule model
  */
 class scheduleModel {
+
+  private $data;
+  private $db;
+  private $files;
+  private $mysqli;
+  private $scheduleData;
+
   /**
    * __construct method
    */
@@ -25,8 +32,59 @@ class scheduleModel {
 
   /**
    * update method
+   * Parses and structures the new schedule data and saves it to the DB
+   *
+   * @param string $type The method used to update the schedule data
    */
-  public function update() {
+  public function update($type) {
+    // Update the schedule information based on the method requested
+    switch($type) {
+      case 'csv':
+        // Init the container array
+        $this->scheduleData = array();
+        // Get the list of files in the directory
+        $this->files = scandir(BASE_PATH . '/uploads');
+
+        foreach ($this->files as $k=>$v) {
+          // We are only looking for *.csv files in the directory
+          // Remove all other files from the list
+          if (strpos($v, '.csv') === false) {
+            unset($this->files[$k]);
+          }
+        }
+
+        // Parse the csv files and place them into an array
+        foreach ($this->files as $item) {
+          // Generate the lable for the data type
+          $this->parts = explode('.', $item);
+          $this->dataType = $this->parts[0];
+          // Parse the *.csv file and place it into the master array
+          $this->data = $this->parseCSV(BASE_PATH.'/uploads/'.$item, ',');
+          $this->scheduleData[$this->dataType] = $this->data;
+        }
+
+        break;
+      case 'api':
+        break;
+    }
+
+    // Insert the parsed data into the DB
+    // TODO: Implement save for the various datatypes
+  }
+
+  /**
+   * save method
+   * Saves the data array to the database
+   *
+   * @param array $data The data object to be saved to the database
+   */
+  private function save($data) {
+    // Init the mySQL connection
+    require_once (BASE_PATH . '/includes/models/sqlModel.php');
+    $this->db = new \tpt\models\sqlModel('localhost', 'root', '', 'tpt');
+
+
+
 
   }
 
@@ -42,7 +100,7 @@ class scheduleModel {
   private function parseCSV($file, $delimiter) {
     require_once BASE_PATH.'/includes/helpers/CSVHelper.php';
 
-    $importer = new CSVHelper($delimiter);
+    $importer = new \tpt\helpers\CSVHelper($delimiter);
     $parse = $importer->get($file);
 
     return $parse;

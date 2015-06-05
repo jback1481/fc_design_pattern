@@ -1,6 +1,6 @@
 <?php
 
-  namespace tpt;
+  namespace tpt\controllers;
 
   /**
    * Class indexController

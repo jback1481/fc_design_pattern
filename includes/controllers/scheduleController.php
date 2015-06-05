@@ -1,6 +1,6 @@
 <?php
 
-  namespace tpt;
+  namespace tpt\controllers;
 
   /**
    * Class scheduleController
@@ -42,15 +42,16 @@
     public function update($params) {
       // Init the model
       require_once (BASE_PATH . '/includes/models/scheduleModel.php');
-      $model = new scheduleModel();
-
+      $model = new \tpt\models\scheduleModel();
+      // Based on the passed method, update the schedule information
       switch($params['method']) {
         case 'csv':
-          echo 'The CSV method will be used';
-          $model->update('csv');
+          // Use the csv files to update the schedule
+          $result = $model->update('csv');
           break;
         case 'api':
-          echo 'The API method will be used';
+          // Use the PBS API to update the schedule
+          $result = $model->update('json');
           break;
       }
     }
