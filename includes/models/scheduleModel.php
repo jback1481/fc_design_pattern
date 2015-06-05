@@ -45,7 +45,7 @@ class scheduleModel {
         // Get the list of files in the directory
         $this->files = scandir(BASE_PATH . '/uploads');
 
-        foreach ($this->files as $k=>$v) {
+        foreach ($this->files as $k => $v) {
           // We are only looking for *.csv files in the directory
           // Remove all other files from the list
           if (strpos($v, '.csv') === false) {
@@ -69,7 +69,7 @@ class scheduleModel {
     }
 
     // Insert the parsed data into the DB
-    // TODO: Implement save for the various datatypes
+    $this->save($this->scheduleData);
   }
 
   /**
@@ -83,8 +83,15 @@ class scheduleModel {
     require_once (BASE_PATH . '/includes/models/sqlModel.php');
     $this->db = new \tpt\models\sqlModel('localhost', 'root', '', 'tpt');
 
+    foreach($data as $k => $v) {
+      echo '<pre>';
+      print_r($v[0]);
+      echo '</pre>';
+      die();
+    }
 
-
+    // TODO: Implement DB object/table mapping, and proper escaping of data.
+    // TODO: Ensure that the stucture of the tables is kosher with our needs.
 
   }
 

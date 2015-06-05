@@ -1,6 +1,6 @@
 -- MySQL dump 10.13  Distrib 5.1.58, for redhat-linux-gnu (x86_64)
 --
--- Host: localhost    Database: tptweb
+-- Host: localhost    Database: tpt
 -- ------------------------------------------------------
 -- Server version	5.1.58-log
 
@@ -35,7 +35,7 @@ CREATE TABLE `k_airlist` (
   KEY `seriesId` (`seriesId`),
   KEY `programId` (`programId`),
   KEY `versionId` (`versionId`)
-) ENGINE=MyISAM AUTO_INCREMENT=12605 DEFAULT CHARSET=latin1 COMMENT='Contains all airlist data from ProTrack going out 2 months';
+) ENGINE=InnoDB AUTO_INCREMENT=12605 DEFAULT CHARSET=latin1 COMMENT='Contains all airlist data from ProTrack going out 2 months';
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -63,7 +63,7 @@ CREATE TABLE `k_episode` (
   KEY `seriesId` (`seriesId`),
   KEY `programId` (`programId`),
   KEY `versionId` (`versionId`)
-) ENGINE=MyISAM AUTO_INCREMENT=68643 DEFAULT CHARSET=latin1 COMMENT='Contains all ProTrack episode data.';
+) ENGINE=InnoDB AUTO_INCREMENT=68643 DEFAULT CHARSET=latin1 COMMENT='Contains all ProTrack episode data.';
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -84,7 +84,7 @@ CREATE TABLE `k_series` (
   PRIMARY KEY (`id`),
   KEY `seriesId` (`seriesId`),
   FULLTEXT KEY `seriesTitle` (`seriesTitle`,`seriesDesc`)
-) ENGINE=MyISAM AUTO_INCREMENT=670 DEFAULT CHARSET=latin1 COMMENT='Contains all imported ProTrack series listing data';
+) ENGINE=InnoDB AUTO_INCREMENT=670 DEFAULT CHARSET=latin1 COMMENT='Contains all imported ProTrack series listing data';
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 /*!40101 SET SQL_MODE=@OLD_SQL_MODE */;

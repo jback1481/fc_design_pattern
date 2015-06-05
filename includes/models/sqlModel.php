@@ -1,15 +1,9 @@
 <?php
-/**
- * Created by PhpStorm.
- * User: jback
- * Date: 6/5/15
- * Time: 10:27 AM
- */
 
 namespace tpt\models;
 
 
-class sqlModel extends mysqli {
+class sqlModel extends \mysqli {
   /**
    * @param string $host The hostname of the mySQL server
    * @param string $user The username of the mySQL server account
