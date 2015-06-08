@@ -24,7 +24,7 @@ DROP TABLE IF EXISTS `k_airlist`;
 /*!40101 SET character_set_client = utf8 */;
 CREATE TABLE `k_airlist` (
   `id` int(11) NOT NULL AUTO_INCREMENT,
-  `fullDate` varchar(19) NOT NULL DEFAULT '',
+  `fullDate` varchar(20) NOT NULL DEFAULT '',
   `seriesId` int(11) NOT NULL DEFAULT '0',
   `programId` int(11) NOT NULL DEFAULT '0',
   `versionId` int(11) NOT NULL DEFAULT '0',

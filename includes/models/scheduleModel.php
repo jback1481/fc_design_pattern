@@ -29,6 +29,10 @@ class scheduleModel {
     //
   }
 
+  public function getAirlist() {
+
+  }
+
   /**
    * update method
    * Parses and structures the new schedule data and saves it to the DB
@@ -68,7 +72,7 @@ class scheduleModel {
     }
 
     // Insert the parsed data into the DB
-    $this->save($this->scheduleData);
+    $this->saveCSV($this->scheduleData);
   }
 
   /**
@@ -77,25 +81,43 @@ class scheduleModel {
    *
    * @param array $data The data object to be saved to the database
    */
-  private function save($data) {
+  private function saveCSV($data) {
     // Microtime start
     $time_start = microtime(true);
-
 
     // Init the mySQL connection
     require_once (BASE_PATH . '/includes/models/sqlModel.php');
     $this->model = \tpt\models\sqlModel::getInstance('localhost', 'root', 'jwbabc', 'tpt');
-    // First, truncate the table
+
+    // First, truncate the tables
     $this->sql = "TRUNCATE TABLE k_airlist";
-    // Save the record to the DB
     $this->model->executeStmt($this->sql);
+    //$this->sql = "TRUNCATE TABLE k_episode";
+    //$this->model->executeStmt($this->sql);
+    //$this->sql = "TRUNCATE TABLE k_series";
+    //$this->model->executeStmt($this->sql);
+
+    // Insert the data into k_airlist
     // Construct the SQL query for the prepared statement
-    $this->sql = "INSERT INTO k_airlist(`fullDate`, `seriesId`, `programId`, `versionId`, `repeat`, `channel`) VALUES (?, ?, ?, ?, ?, ?)";
+    $this->sql = "
+      INSERT INTO k_airlist(
+        `fullDate`,
+        `seriesId`,
+        `programId`,
+        `versionId`,
+        `repeat`,
+        `channel`
+      ) VALUES (
+        ?,
+        ?,
+        ?,
+        ?,
+        ?,
+        ?
+      )";
+
     // Construct the parameters for the prepared statement
     foreach($data['k_airlist'] as $k => $v) {
-      // Prepare the parameters array to send to the model
-      $this->params = array();
-
       foreach ($v as $column => $value) {
         if ($column === 'id') {
           // Do nothing
@@ -107,11 +129,91 @@ class scheduleModel {
       $this->model->executeStmt($this->sql, $this->params);
     }
 
+    unset($this->params);
+
     // Microtime end
     $time_end = microtime(true);
     $time = $time_end - $time_start;
 
     echo "Script executed in $time seconds\n";
+
+    // Insert the data into k_episode
+    $this->sql = "
+      INSERT INTO k_episode(
+        `seriesId`,
+        `programId`,
+        `versionId`,
+        `episodeLength`,
+        `episodeNum`,
+        `episodeTitle`,
+        `episodeGuide`,
+        `episodeDesc`,
+        `episodeUrl`,
+        `cc`,
+        `stereo`,
+        `rating`
+      ) VALUES (
+        ?,
+        ?,
+        ?,
+        ?,
+        ?,
+        ?,
+        ?,
+        ?,
+        ?,
+        ?,
+        ?,
+        ?
+      )";
+
+    // Construct the parameters for the prepared statement
+    foreach($data['k_episode'] as $k => $v) {
+      foreach ($v as $column => $value) {
+        if ($column === 'id') {
+          // Do nothing
+        } else {
+          $this->params[$column] = $value;
+        }
+      }
+      // Save the record to the DB
+      $this->model->executeStmt($this->sql, $this->params);
+    }
+
+    unset($this->params);
+
+    // Insert the data into k_series
+    $this->sql = "
+      INSERT INTO k_series(
+        `seriesId`,
+        `seriesCode`,
+        `seriesTitle`,
+        `seriesDesc`,
+        `seriesUrl`,
+        `seriesGenre`
+      ) VALUES (
+        ?,
+        ?,
+        ?,
+        ?,
+        ?,
+        ?
+      )";
+
+    // Construct the parameters for the prepared statement
+    foreach($data['k_series'] as $k => $v) {
+      foreach ($v as $column => $value) {
+        if ($column === 'id') {
+          // Do nothing
+        } else {
+          $this->params[$column] = $value;
+        }
+      }
+      // Save the record to the DB
+      $this->model->executeStmt($this->sql, $this->params);
+    }
+
+    unset($this->params);
   }
 
   /**

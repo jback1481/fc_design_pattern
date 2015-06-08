@@ -29,6 +29,8 @@
      */
     public function index() {
 
+
+
       // Render the view
       require_once(BASE_PATH . '/includes/views/partials/header.php');
       require_once(BASE_PATH . '/includes/views/schedule/index.php');
