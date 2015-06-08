@@ -131,12 +131,6 @@ class scheduleModel {
 
     unset($this->params);
 
-    // Microtime end
-    $time_end = microtime(true);
-    $time = $time_end - $time_start;
-
-    echo "Script executed in $time seconds\n";
-
     // Insert the data into k_episode
     $this->sql = "
       INSERT INTO k_episode(
@@ -214,6 +208,12 @@ class scheduleModel {
     }
 
     unset($this->params);
+
+    // Microtime end
+    $time_end = microtime(true);
+    $time = $time_end - $time_start;
+
+    echo "Script executed in $time seconds\n";
   }
 
   /**
