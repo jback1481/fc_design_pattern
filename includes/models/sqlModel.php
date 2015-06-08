@@ -40,7 +40,7 @@ class sqlModel extends \mysqli {
    * getInstance method
    * Return the singleton of the mySQLi instance
    *
-   * @return sqlModel The singleton of the mySQLi object
+   * @return sqlModel $instance The singleton of the mySQLi object
    */
   public static function getInstance($host, $user, $pass, $db) {
     if (self::$instance) {
@@ -62,53 +62,55 @@ class sqlModel extends \mysqli {
    * executeQuery method
    * Executes a mySQLi query and returns the result
    */
-  public function executeQuery($sql, $params) {
+  public function executeStmt($sql, $params = array()) {
     // Init the mySQLi statement object
     $this->stmt = self::$instance->stmt_init();
     // Prepare the SQL statement
     $this->stmt->prepare($sql);
 
-    // Dynamically bind the parameters to the mySQLi object
-    // Generate your param type string (for instance "sss" for 3 string parameters)
-    // For each parameter, determine it's type and map it to the predetermined mySQLi types:
-    //   i - corresponding variable has type integer
-    //   d - corresponding variable has type double (float)
-    //   s - corresponding variable has type string
-    //   b - corresponding variable is a blob and will be sent in packets
+    // Do only if parameters are sent along with the SQL statement
+    if (empty($params)) {
+      //
+    } else {
+      // Dynamically bind the parameters to the mySQLi object
+      // Generate your param type string (for instance "sss" for 3 string parameters)
+      // For each parameter, determine it's type and map it to the predetermined mySQLi types:
+      //   i - corresponding variable has type integer
+      //   d - corresponding variable has type double (float)
+      //   s - corresponding variable has type string
+      //   b - corresponding variable is a blob and will be sent in packets
 
-    $this->queryTypes = '';
+      $this->queryTypes = '';
 
-    foreach ($params as $item) {
-      switch (gettype ($item)) {
-        case "integer":
-          $this->queryTypes .= 'i';
-          break;
-        case "double":
-          $this->queryTypes .= 'd';
-          break;
-        case "string":
-          $this->queryTypes .= 's';
-          break;
-        default:
-          $this->queryTypes .= 's';
+      foreach ($params as $item) {
+        switch (gettype($item)) {
+          case "integer":
+            $this->queryTypes .= 'i';
+            break;
+          case "double":
+            $this->queryTypes .= 'd';
+            break;
+          case "string":
+            $this->queryTypes .= 's';
+            break;
+          default:
+            $this->queryTypes .= 's';
+        }
       }
+
+      // Add the type string to the query params array (passed by reference)
+      $this->queryParams[] = &$this->queryTypes;
+      // Add the parameters to the array (passed by reference)
+      foreach ($params as $id => $term) {
+        $this->queryParams[] = &$params[$id];
+      }
+
+      // Call bind_param to bind the parameters to the statement
+      call_user_func_array(array($this->stmt, 'bind_param'), $this->queryParams);
+      // Unset the query parameters
+      unset($this->queryParams);
     }
 
-    // Add the type string to the query params array (passed by reference)
-    $this->queryParams[] = &$this->queryTypes;
-    // Add the parameters to the array (passed by reference)
-    foreach ($params as $id => $term) {
-      $this->queryParams[] = &$params[$id];
-    }
-
-    echo '<pre>';
-    print_r($this->queryParams);
-    echo '</pre>';
-
-    // Call bind_param to bind the parameters to the statement
-    call_user_func_array(array($this->stmt, 'bind_param'), $this->queryParams);
-    // Unset the query parameters
-    unset($this->queryParams);
     // Execute the query
     $this->stmt->execute();
 

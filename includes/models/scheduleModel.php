@@ -78,9 +78,17 @@ class scheduleModel {
    * @param array $data The data object to be saved to the database
    */
   private function save($data) {
+    // Microtime start
+    $time_start = microtime(true);
+
+
     // Init the mySQL connection
     require_once (BASE_PATH . '/includes/models/sqlModel.php');
     $this->model = \tpt\models\sqlModel::getInstance('localhost', 'root', 'jwbabc', 'tpt');
+    // First, truncate the table
+    $this->sql = "TRUNCATE TABLE k_airlist";
+    // Save the record to the DB
+    $this->model->executeStmt($this->sql);
     // Construct the SQL query for the prepared statement
     $this->sql = "INSERT INTO k_airlist(`fullDate`, `seriesId`, `programId`, `versionId`, `repeat`, `channel`) VALUES (?, ?, ?, ?, ?, ?)";
     // Construct the parameters for the prepared statement
@@ -96,8 +104,14 @@ class scheduleModel {
         }
       }
       // Save the record to the DB
-      $this->model->executeQuery($this->sql, $this->params);
+      $this->model->executeStmt($this->sql, $this->params);
     }
+
+    // Microtime end
+    $time_end = microtime(true);
+    $time = $time_end - $time_start;
+
+    echo "Script executed in $time seconds\n";
   }
 
   /**
