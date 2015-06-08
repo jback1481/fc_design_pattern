@@ -9,25 +9,24 @@ namespace tpt\models;
  * The schedule model
  */
 class scheduleModel {
-
   private $data;
-  private $db;
   private $files;
-  private $mysqli;
+  private $model;
+  private $params;
   private $scheduleData;
 
   /**
    * __construct method
    */
   public function __construct() {
-
+    //
   }
 
   /**
    * __destruct method
    */
   public function __destruct() {
-
+    //
   }
 
   /**
@@ -81,18 +80,24 @@ class scheduleModel {
   private function save($data) {
     // Init the mySQL connection
     require_once (BASE_PATH . '/includes/models/sqlModel.php');
-    $this->db = new \tpt\models\sqlModel('localhost', 'root', '', 'tpt');
+    $this->model = \tpt\models\sqlModel::getInstance('localhost', 'root', 'jwbabc', 'tpt');
+    // Construct the SQL query for the prepared statement
+    $this->sql = "INSERT INTO k_airlist(`fullDate`, `seriesId`, `programId`, `versionId`, `repeat`, `channel`) VALUES (?, ?, ?, ?, ?, ?)";
+    // Construct the parameters for the prepared statement
+    foreach($data['k_airlist'] as $k => $v) {
+      // Prepare the parameters array to send to the model
+      $this->params = array();
 
-    foreach($data as $k => $v) {
-      echo '<pre>';
-      print_r($v[0]);
-      echo '</pre>';
-      die();
+      foreach ($v as $column => $value) {
+        if ($column === 'id') {
+          // Do nothing
+        } else {
+          $this->params[$column] = $value;
+        }
+      }
+      // Save the record to the DB
+      $this->model->executeQuery($this->sql, $this->params);
     }
-
-    // TODO: Implement DB object/table mapping, and proper escaping of data.
-    // TODO: Ensure that the stucture of the tables is kosher with our needs.
-
   }
 
   /**
@@ -112,5 +117,4 @@ class scheduleModel {
 
     return $parse;
   }
-
 }
