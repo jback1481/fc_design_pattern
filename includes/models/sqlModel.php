@@ -10,10 +10,10 @@ class sqlModel extends \mysqli {
   protected static $db;
   protected static $instance;
 
-  private $stmt;
   private $queryTypes;
   private $queryParams;
-
+  private $result;
+  private $stmt;
 
   /**
    * __construct method
@@ -113,17 +113,11 @@ class sqlModel extends \mysqli {
 
     // Execute the query
     $this->stmt->execute();
-
-    /*
-    $stmt->store_result();
-    $stmt->bind_result($column1, $column2, $column3);
-
-    while($stmt->fetch()) {
-      echo "col1=$column1, col2=$column2, col3=$column3 \n";
-    }
-    */
-
+    // Return the result
+    $this->result = $this->stmt->get_result();
     // Close the mySQLi handle
     $this->stmt->close();
+
+    return $this->result;
   }
 }

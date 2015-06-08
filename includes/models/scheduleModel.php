@@ -9,9 +9,11 @@ namespace tpt\models;
  * The schedule model
  */
 class scheduleModel {
+  protected static $model;
+
+  private $airlistData;
   private $data;
   private $files;
-  private $model;
   private $params;
   private $scheduleData;
 
@@ -19,7 +21,10 @@ class scheduleModel {
    * __construct method
    */
   public function __construct() {
-    //
+    // Init the mySQL connection
+    require_once (BASE_PATH . '/includes/models/sqlModel.php');
+    // Get the singleton instance of $model
+    $this->model = \tpt\models\sqlModel::getInstance('localhost', 'root', 'jwbabc', 'tpt');
   }
 
   /**
@@ -30,7 +35,36 @@ class scheduleModel {
   }
 
   public function getAirlist() {
+    $this->sql = "
+      SELECT
+        k_airlist.fullDate airDate,
+        k_airlist.channel channel,
+        k_episode.episodeLength duration,
+        k_episode.episodeTitle episode_title,
+        k_episode.episodeGuide episode_desc,
+        k_episode.cc closed_caption,
+        k_episode.stereo stereo,
+        k_episode.rating rating,
+        k_series.seriesTitle series_title
+      FROM
+        k_airlist
 
+      JOIN
+        k_episode
+      ON
+        k_airlist.programId = k_episode.programId
+
+      JOIN
+        k_series
+      ON
+        k_airlist.seriesId = k_series.seriesId
+
+      ORDER BY
+        airDate";
+
+    $this->airlistData = $this->model->executeStmt($this->sql);
+
+    return $this->airlistData;
   }
 
   /**
@@ -85,17 +119,13 @@ class scheduleModel {
     // Microtime start
     $time_start = microtime(true);
 
-    // Init the mySQL connection
-    require_once (BASE_PATH . '/includes/models/sqlModel.php');
-    $this->model = \tpt\models\sqlModel::getInstance('localhost', 'root', 'jwbabc', 'tpt');
-
     // First, truncate the tables
     $this->sql = "TRUNCATE TABLE k_airlist";
     $this->model->executeStmt($this->sql);
-    //$this->sql = "TRUNCATE TABLE k_episode";
-    //$this->model->executeStmt($this->sql);
-    //$this->sql = "TRUNCATE TABLE k_series";
-    //$this->model->executeStmt($this->sql);
+    $this->sql = "TRUNCATE TABLE k_episode";
+    $this->model->executeStmt($this->sql);
+    $this->sql = "TRUNCATE TABLE k_series";
+    $this->model->executeStmt($this->sql);
 
     // Insert the data into k_airlist
     // Construct the SQL query for the prepared statement
